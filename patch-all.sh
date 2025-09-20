@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -e
+set -o pipefail
 
 COMMIT=9b0f1436e455d902de067a2501422e5dc71ad16b
 
