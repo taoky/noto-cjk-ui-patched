@@ -20,6 +20,23 @@ def process_font(font, face_idx=None):
     print("hhea ascent :", hhea.ascent)
     print("hhea descent:", hhea.descent)
 
+    name = font["name"]
+    for idx, n in enumerate(name.names):
+        print(f"name {idx}: {n.string.decode('utf-16be')}")
+
+    if "CFF " in font:
+        cff = font["CFF "]
+        top = cff.cff.topDictIndex[0]
+        if hasattr(top, 'FontName'):
+            print(top.FontName, 'FontName')
+        elif hasattr(top, 'fontName'):
+            print(top.fontName, 'fontName')
+        if hasattr(top, 'FullName'):
+            print(top.FullName, 'FullName')
+        if hasattr(top, 'FamilyName'):
+            print(top.FamilyName, 'FamilyName')
+
+
 
 def main():
     in_path = Path(sys.argv[1])
