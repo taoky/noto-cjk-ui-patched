@@ -1,0 +1,37 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          sudo apt install python3-fonttools
+          ./download.sh
+          ./patch-all.sh
+
+      - name: Compute release name and tag
+        id: meta
+        run: |
+          RELEASE_NAME="$(date -u +'%Y-%m-%d')"
+          TAG="release-$(date -u +'%Y%m%d-%H%M%S')"
+          echo "name=${RELEASE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload output/*
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.name }}
+          files: |
+            output/*
